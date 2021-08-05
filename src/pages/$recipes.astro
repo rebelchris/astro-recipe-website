@@ -1,0 +1,39 @@
+---
+export async function createCollection() {
+  const allRecipes = Astro.fetchContent('./recipe/*.md')
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return {
+    paginate: true,
+    route: '/recipes/:page?',
+    async props({paginate}) {
+      return {
+        recipes: paginate(allRecipes, {pageSize: 5}),
+      };
+    },
+  };
+}
+
+const {recipes} = Astro.props;
+---
+<html lang="en">
+  <head>
+    <title>Pagination Example</title>
+  </head>
+  <body>
+    <h1>All recipes</h1>
+    {recipes.data.map((recipe) => (
+        <a href={recipe.url}>
+            <h1>{recipe.title}</h1>
+        </a>
+    ))}
+    <footer>
+      <h4>Page {recipes.page.current} / {recipes.page.last}</h4>
+      <nav class="nav">
+        <a class="prev" href={recipes.url.prev || '#'}>Prev</a>
+         | 
+        <a class="next" href={recipes.url.next || '#'}>Next</a>
+      </nav>
+    </footer>
+  </body>
+</html>

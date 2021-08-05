@@ -1,0 +1,21 @@
+---
+const { content } = Astro.props;
+---
+<html>
+  <head>
+    <title>{content.title}</title>
+  </head>
+
+  <body>
+    <main class="wrapper">
+      <h2 class="title">{content.title}</h2>
+      <img width="500px" class="img" src={content.image} alt={content.title}>
+      <article class="article">
+        <slot />
+      </article>
+      <footer class="footer">
+        <a class="posts" href="/recipes">All Recipes</a>
+      </footer>
+    </main>
+  </body>
+</html>
