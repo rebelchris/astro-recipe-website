@@ -1,18 +1,9 @@
 ---
-// Component Imports
-import Tour from '../components/Tour.astro';
-// You can import components from any supported Framework here!
-
-
-// Component Script:
-// You can write any JavaScript/TypeScript that you'd like here.
-// It will run during the build, but never in the browser.
-// All variables are available to use in the HTML template below.
-let title = 'My Astro Site';
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/core-concepts/astro-components/
+const title = 'Astro Recipe Website';
+const recipes = Astro.fetchContent('./recipe/*.md')
+    .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
 ---
+<!-- HTML Code -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,37 +11,36 @@ let title = 'My Astro Site';
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/style/global.css">
-    <link rel="stylesheet" href="/style/home.css">
-
-    <style>
-        header {
-            display: flex;
-            flex-direction: column;
-            gap: 1em;
-            max-width: min(100%, 68ch);
+    <style lang="scss">
+        section {
+            display: grid;
+            grid-template: '1fr 1fr 1fr 1fr 1fr';
+        }
+        article {
+            padding: 1rem;
+            img {
+                object-fit: cover;
+                width: 100%;
+                height: 200px;
+                margin-bottom: 0.5rem;
+            }
+            h3 {
+                color: #fff;
+            }
         }
     </style>
 </head>
 <body>
-    <main>
-        <header>
-            <div>
-                <img width="60" height="80" src="/assets/logo.svg" alt="Astro logo">
-                <h1>Welcome to <a href="https://astro.build/">Astro</a></h1>
-            </div>
-        </header>
-
-        <Tour />
-
-        <!--
-           - You can also use imported framework components directly in your markup!
-           -
-           - Note: by default, these components are NOT interactive on the client.
-           - The `:visible` directive tells Astro to make it interactive.
-           -
-           - See https://docs.astro.build/core-concepts/component-hydration/ 
-           -->
-
-    </main>
+    <h1>Last five recipes 🍲</h1>
+    <section>
+        {recipes.map(recipe => (
+            <article>
+                <a href={recipe.url}>
+                    <img src={recipe.image} alt={recipe.title} />
+                    <h3>{recipe.title}</h3>
+                </a>
+            </article>
+        ))}
+    <section>
 </body>
 </html>
