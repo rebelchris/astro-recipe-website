@@ -1,7 +1,10 @@
 ---
+import Nav from '../components/Nav.astro';
+import Recipe from '../components/Recipe.astro';
+import Header from '../components/Header.astro';
 const title = 'Astro Recipe Website';
 const recipes = Astro.fetchContent('./recipe/*.md')
-    .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+    .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
 ---
 <!-- HTML Code -->
 <html lang="en">
@@ -11,36 +14,12 @@ const recipes = Astro.fetchContent('./recipe/*.md')
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/style/global.css">
-    <style lang="scss">
-        section {
-            display: grid;
-            grid-template: '1fr 1fr 1fr 1fr 1fr';
-        }
-        article {
-            padding: 1rem;
-            img {
-                object-fit: cover;
-                width: 100%;
-                height: 200px;
-                margin-bottom: 0.5rem;
-            }
-            h3 {
-                color: #fff;
-            }
-        }
-    </style>
 </head>
 <body>
-    <h1>Last five recipes 🍲</h1>
-    <section>
-        {recipes.map(recipe => (
-            <article>
-                <a href={recipe.url}>
-                    <img src={recipe.image} alt={recipe.title} />
-                    <h3>{recipe.title}</h3>
-                </a>
-            </article>
-        ))}
-    <section>
+    <Nav />
+    <Header title="Our latest recipes" text="These are latest six recipes added to our blog." />
+    <section class="grid grid-cols-3 py-8">
+        {recipes.map(recipe => (<Recipe recipe={recipe} />))}
+    </section>
 </body>
 </html>
