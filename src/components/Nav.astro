@@ -1,0 +1,15 @@
+---
+const menu = [
+  { url: '/', text: 'Home' }, 
+  { url: '/recipes', text: 'Find recipes'}, 
+  { url: '/recipes/all', text: 'All recipes'}
+];
+---
+<header class="border-b-2 border-gray-100">
+  <nav class="flex justify-between items-center	 max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-pink-400 text-4xl uppercase tracking-narrow"><a href="/">Recipe blog</a></h1>
+    <ul class="flex">
+      {menu.map(item => (<li><a class="mx-4 block font-sans font-bold uppercase tracking-wider text-black no-underline " href={item.url}>{item.text}</a></li>))}
+    </ul>
+  </nav>
+</header>

@@ -1,0 +1,49 @@
+---
+import Nav from '../../components/Nav.astro';
+import Header from '../../components/Header.astro';
+
+const title = 'Astro Recipe Website';
+const allRecipes = Astro.fetchContent('./../recipe/*.md');
+const filterKeys = ['meal_type', 'course', 'diet', 'main_ingredient'];
+const readableFilters = {
+    meal_type: 'Meal Type',
+    course: 'Course',
+    diet: 'Diet',
+    main_ingredient: 'Main Ingredient'
+};
+const filters = allRecipes.reduce((curr, recipe) => {
+    filterKeys.forEach((key) => {
+        if(!recipe[key]) return;
+        if(!curr[key]) curr[key] = [];
+        curr[key] = [...new Set([...curr[key], recipe[key]])];
+    });
+    return curr;
+}, []);
+const slugify = url => ( url.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-') );
+---
+<!-- HTML Code -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
+<body>
+    <Nav />
+    <Header title="Find your filter" text="We created these amazing filters so you can easily find the recipe you are looking for." />
+        {Object.keys(filters).map((key, value) => (
+            <section class="py-8 px-4">
+                <h2 class="text-lg font-black text-black uppercase border-b-2 border-gray-100">{readableFilters[key]}</h2>
+                <ul class="grid grid-cols-2 md:grid-cols-3 list-disc list-inside py-2">
+                    {filters[key].map((item) => (
+                        <li class="py-2">
+                            <a class="hover:underline" href={`/recipes/${slugify(item)}`}>{item}</a>
+                        </li>
+                    ))} 
+                </ul>
+            </section>
+        ))}
+</body>
+</html>

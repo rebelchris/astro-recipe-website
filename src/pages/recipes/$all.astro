@@ -1,0 +1,41 @@
+---
+import Nav from '../../components/Nav.astro';
+import Header from '../../components/Header.astro';
+import Recipe from '../../components/Recipe.astro';
+import Pagination from '../../components/Pagination.astro';
+const title = 'Astro Recipe Website';
+
+export async function createCollection() {
+  const allRecipes = Astro.fetchContent('./../recipe/*.md')
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return {
+    paginate: true,
+    route: '/recipes/all/:page?',
+    async props({paginate}) {
+      return {
+        recipes: paginate(allRecipes, {pageSize: 5}),
+      };
+    },
+  };
+}
+
+const {recipes} = Astro.props;
+---
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
+  <body>
+  <Nav/>
+  <Header title="All recipes" text="A collection of all our recipes in one place" />
+  <section class="grid grid-cols-3 py-8">
+      {recipes.data.map(recipe => (<Recipe recipe={recipe} />))}
+  </section>
+  <Pagination data={recipes} />
+  </body>
+</html>

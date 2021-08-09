@@ -1,39 +1,61 @@
 ---
+const title = 'Astro Recipe Website';
+import Nav from '../components/Nav.astro';
+import Recipe from '../components/Recipe.astro';
+import Pagination from '../components/Pagination.astro';
+import Header from '../components/Header.astro';
+
 export async function createCollection() {
-  const allRecipes = Astro.fetchContent('./recipe/*.md')
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const allRecipes = Astro.fetchContent('./recipe/*.md');
+  const filterKeys = ['meal_type', 'course', 'diet', 'main_ingredient'];
+  const filters = [...new Set(allRecipes.reduce((curr, recipe) => {
+    filterKeys.forEach((key) => {
+      if(!recipe[key]) return;
+      curr.push(recipe[key]);
+    });
+    return curr;
+  }, []))];
+
+  const slugify = url => ( url.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-') );
 
   return {
     paginate: true,
-    route: '/recipes/:page?',
-    async props({paginate}) {
+    route: '/recipes/:slug/:page?',
+    paths() {
+      return filters.map(filter => (
+        {params: {slug: slugify(filter), filter: filter}}
+      ));
+    },
+    async props({params, paginate}) {
       return {
-        recipes: paginate(allRecipes, {pageSize: 5}),
+        filter: params.filter,
+        slug: params.slug,
+        recipes: paginate(allRecipes.filter((recipe) => (
+          filterKeys.some(key => (
+            recipe[key] === params.filter
+          ))
+        )), {pageSize: 5}),
       };
     },
   };
 }
 
-const {recipes} = Astro.props;
+const {filter, slug, recipes} = Astro.props;
 ---
 <html lang="en">
-  <head>
-    <title>Pagination Example</title>
-  </head>
-  <body>
-    <h1>All recipes</h1>
-    {recipes.data.map((recipe) => (
-        <a href={recipe.url}>
-            <h1>{recipe.title}</h1>
-        </a>
-    ))}
-    <footer>
-      <h4>Page {recipes.page.current} / {recipes.page.last}</h4>
-      <nav class="nav">
-        <a class="prev" href={recipes.url.prev || '#'}>Prev</a>
-         | 
-        <a class="next" href={recipes.url.next || '#'}>Next</a>
-      </nav>
-    </footer>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
+<body>
+  <Nav />
+    <Header title={`All ${filter} Recipes`} text={`Find your perfect ${filter} recipe`} />
+    <section class="grid grid-cols-3 py-8">
+        {recipes.data.map(recipe => (<Recipe recipe={recipe} />))}
+    </section>
+    <Pagination data={recipes} />
   </body>
 </html>
