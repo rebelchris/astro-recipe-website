@@ -9,12 +9,12 @@ export interface Props {
 }
 const { data } = Astro.props;
 ---
-{ data.page.last !== 1 && (
-    <footer class="text-center py-8">
-        <h2 class="text-xl text-bold uppercase mb-4">More recipes</h2>
+{ data.total > 1 && (
+    <footer class="py-8 text-center">
+        <h2 class="mb-4 text-xl uppercase text-bold">More recipes</h2>
         <ul class="flex justify-center">
-            <li><a class="flex mx-2 justify-center items-center h-12 w-12 rounded bg-pink-200" href={data.url.prev || '#'}>&#60;</a></li>
-            <li><a class="flex mx-2 justify-center items-center h-12 w-12 rounded bg-pink-200" href={data.url.next || '#'}>&#62;</a></li>
+            <li><a class="flex items-center justify-center w-12 h-12 mx-2 bg-pink-200 rounded" href={data.url.prev || '#'}>&#60;</a></li>
+            <li><a class="flex items-center justify-center w-12 h-12 mx-2 bg-pink-200 rounded" href={data.url.next || '#'}>&#62;</a></li>
         </ul>
     </footer>
     )
