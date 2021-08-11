@@ -1,0 +1,33 @@
+---
+import Nav from '../../../components/Nav.astro';
+import Header from '../../../components/Header.astro';
+import Recipe from '../../../components/Recipe.astro';
+import Pagination from '../../../components/Pagination.astro';
+const title = 'Astro Recipe Website';
+
+export async function getStaticPaths({paginate}) {
+  const allRecipes = Astro.fetchContent('./../../recipe/*.md')
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return paginate(allRecipes, {pageSize: 5});
+}
+
+const {page} = Astro.props;
+---
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
+  <body>
+  <Nav/>
+  <Header title="All recipes" text="A collection of all our recipes in one place" />
+  <section class="grid grid-cols-3 py-8">
+      {page.data.map(recipe => (<Recipe recipe={recipe} />))}
+  </section>
+  <Pagination data={page} />
+  </body>
+</html>
