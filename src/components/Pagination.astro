@@ -9,7 +9,7 @@ export interface Props {
 }
 const { data } = Astro.props;
 ---
-{ data.total > 1 && (
+{ data.lastPage > 1 && (
     <footer class="py-8 text-center">
         <h2 class="mb-4 text-xl uppercase text-bold">More recipes</h2>
         <ul class="flex justify-center">
