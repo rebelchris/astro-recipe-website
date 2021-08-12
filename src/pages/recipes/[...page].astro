@@ -1,0 +1,31 @@
+---
+export async function getStaticPaths({paginate}) {
+  const allRecipes = Astro.fetchContent('./../recipe/*.md')
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return paginate(allRecipes, {pageSize: 5});
+}
+
+const {page} = Astro.props;
+---
+<html lang="en">
+  <head>
+    <title>Pagination Example</title>
+  </head>
+  <body>
+    <h1>All recipes</h1>
+    {page.data.map((recipe) => (
+        <a href={recipe.url}>
+            <h1>{recipe.title}</h1>
+        </a>
+    ))}
+    <footer>
+      <h4>Page {page.current} / {page.last}</h4>
+      <nav class="nav">
+        <a class="prev" href={page.url.prev || '#'}>Prev</a>
+         | 
+        <a class="next" href={page.url.next || '#'}>Next</a>
+      </nav>
+    </footer>
+  </body>
+</html>
