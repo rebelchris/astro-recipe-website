@@ -1,5 +1,9 @@
 ---
 const title = 'Astro Recipe Website';
+import Nav from '../../../components/Nav.astro';
+import Recipe from '../../../components/Recipe.astro';
+import Pagination from '../../../components/Pagination.astro';
+import Header from '../../../components/Header.astro';
 
 export function getStaticPaths({paginate}) {
   const filterKeys = ['meal_type', 'course', 'diet', 'main_ingredient'];
@@ -32,28 +36,19 @@ export function getStaticPaths({paginate}) {
 const { page, filter } = Astro.props;
 ---
 <html lang="en">
-  <head>
-    <title>Pagination Example</title>
-  </head>
-  <body>
-    <h1>All {filter} Recipes</h1>
-    {page.data.map((recipe) => (
-      <a href={recipe.url}>
-        <h1>{recipe.title}</h1>
-      </a>
-    ))}
-    <footer>
-      <h4>
-        Page {page.current} / {page.last}
-      </h4>
-      <nav class="nav">
-        <a class="prev" href={page.url.prev || '#'}>
-          Prev
-        </a>
-        |<a class="next" href={page.url.next || '#'}>
-          Next
-        </a>
-      </nav>
-    </footer>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
+<body>
+  <Nav />
+    <Header title={`All ${filter} Recipes`} text={`Find your perfect ${filter} recipe`} />
+    <section class="grid grid-cols-3 py-8">
+        {page.data.map(recipe => (<Recipe recipe={recipe} />))}
+    </section>
+    <Pagination data={page} />
   </body>
 </html>

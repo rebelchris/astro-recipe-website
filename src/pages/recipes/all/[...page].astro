@@ -1,8 +1,12 @@
 ---
 const title = 'Astro Recipe Website';
+import Nav from '../../../components/Nav.astro';
+import Recipe from '../../../components/Recipe.astro';
+import Pagination from '../../../components/Pagination.astro';
+import Header from '../../../components/Header.astro';
 
 export async function getStaticPaths({paginate}) {
-  [const allRecipes = Astro.fetchContent('./../../recipe/*.md')]
+  const allRecipes = Astro.fetchContent('./../../recipe/*.md')
     .sort((a, b) => a.date.localeCompare(b.date));
 
   return paginate(allRecipes, {pageSize: 5});
@@ -11,23 +15,19 @@ export async function getStaticPaths({paginate}) {
 const {page} = Astro.props;
 ---
 <html lang="en">
-  <head>
-    <title>Pagination Example</title>
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style/global.css">
+</head>
   <body>
-    <h1>All recipes</h1>
-    {page.data.map((recipe) => (
-        <a href={recipe.url}>
-            <h1>{recipe.title}</h1>
-        </a>
-    ))}
-    <footer>
-      <h4>Page {page.current} / {page.last}</h4>
-      <nav class="nav">
-        <a class="prev" href={page.url.prev || '#'}>Prev</a>
-         | 
-        <a class="next" href={page.url.next || '#'}>Next</a>
-      </nav>
-    </footer>
+  <Nav/>
+  <Header title="All recipes" text="A collection of all our recipes in one place" />
+  <section class="grid grid-cols-3 py-8">
+      {page.data.map(recipe => (<Recipe recipe={recipe} />))}
+  </section>
+  <Pagination data={page} />
   </body>
 </html>
