@@ -1,6 +1,8 @@
 ---
+const title = 'Astro Recipe Website';
+
 export async function getStaticPaths({paginate}) {
-  const allRecipes = Astro.fetchContent('./../recipe/*.md')
+  [const allRecipes = Astro.fetchContent('./../../recipe/*.md')]
     .sort((a, b) => a.date.localeCompare(b.date));
 
   return paginate(allRecipes, {pageSize: 5});

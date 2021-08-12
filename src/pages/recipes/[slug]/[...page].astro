@@ -1,0 +1,59 @@
+---
+const title = 'Astro Recipe Website';
+
+export function getStaticPaths({paginate}) {
+  const filterKeys = ['meal_type', 'course', 'diet', 'main_ingredient'];
+  const allRecipes = Astro.fetchContent('./../../recipe/*.md');
+
+  const filters = [...new Set(allRecipes.reduce((curr, recipe) => {
+    filterKeys.forEach((key) => {
+      if(!recipe[key]) return;
+      curr.push(recipe[key]);
+    });
+    return curr;
+  }, []))];
+
+  const slugify = url => ( url.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-') );
+
+  return filters.map((filter) => {
+    const filteredPosts = allRecipes.filter((recipe) => (
+      filterKeys.some(key => (
+        recipe[key] === filter
+      ))
+    ));
+
+    return paginate(filteredPosts, {
+      params: { slug: slugify(filter) },
+      props: { filter },
+      pageSize: 5
+    });
+  });
+}
+const { page, filter } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <title>Pagination Example</title>
+  </head>
+  <body>
+    <h1>All {filter} Recipes</h1>
+    {page.data.map((recipe) => (
+      <a href={recipe.url}>
+        <h1>{recipe.title}</h1>
+      </a>
+    ))}
+    <footer>
+      <h4>
+        Page {page.current} / {page.last}
+      </h4>
+      <nav class="nav">
+        <a class="prev" href={page.url.prev || '#'}>
+          Prev
+        </a>
+        |<a class="next" href={page.url.next || '#'}>
+          Next
+        </a>
+      </nav>
+    </footer>
+  </body>
+</html>
